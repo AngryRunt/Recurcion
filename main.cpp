@@ -315,6 +315,18 @@ int BTree::Prn_Tree_Height_Direct_2(const Node_Tree* Root, int Flag)
 //----------------------------------------------------------------------------
 void BTree::Prn_Tree_Height_Reverse_Odd_Value(const Node_Tree* Root)
 {
+    if(Root->Left != NULL)
+    {
+        Prn_Tree_Height_Reverse_Odd_Value(Root->Left);
+    }
+    if(Root->Right != NULL)
+    {
+        Prn_Tree_Height_Reverse_Odd_Value(Root->Right);
+    }
+    if(Root->Value % 2)
+    {
+        printf(" %d ;", Root->Value);
+    }
 }
 //----------------------------------------------------------------------------
 // - 6 -  Прямой обход дерева (четные уровни)
