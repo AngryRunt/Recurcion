@@ -333,7 +333,20 @@ void BTree::Prn_Tree_Height_Reverse_Odd_Value(const Node_Tree* Root)
 //----------------------------------------------------------------------------
 void BTree::Prn_Tree_Height_Direct_Even_Level(const Node_Tree* Root, int Level)
 {
-}
+    if(!(Level % 2))
+    {
+        printf(" %d ;", Root->Value);
+    }
+    if(Root->Left != NULL)
+    {
+        Prn_Tree_Height_Direct_Even_Level(Root->Left, Level + 1);
+    }
+    if(Root->Right != NULL)
+    {
+        Prn_Tree_Height_Direct_Even_Level(Root->Right, Level + 1);
+    }
+   }
+
 //-------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 // - 7 -  Обход дерева в ширину
