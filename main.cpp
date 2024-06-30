@@ -53,7 +53,7 @@ private:
     void Prn_Tree_HLeaf_2(const Node_Tree* Root, int Cur_Level, int Height);
     void Prn_Tree_SumPrevNodes(const Node_Tree* Root, const int sum);
     int Prn_Tree_SumExistentNodes(const Node_Tree* Root);
-    int Prn_Tree_SumNotExistentNodes(const Node_Tree* Root);
+    void Prn_Tree_SumNotExistentNodes(const Node_Tree* Root, int sum);
 
     void Clear_Order_1(Node_Tree* Root);
     int Create_Order_Row_2(Node_Tree* Root);
@@ -700,15 +700,42 @@ int BTree::Prn_Tree_SumExistentNodes(const Node_Tree* Root)
     {
         sum += Prn_Tree_SumExistentNodes(Root->Right);
     }
-    printf(" %d ;", sum);
+   // printf(" %d ;", sum);
     return sum;
 }
 //--------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 // 14 -  В вершину вставить сумму листьев НЕ достижимых из данной вершины
 //----------------------------------------------------------------------------
-
+void BTree::Prn_Tree_SumNotExistentNodes(const Node_Tree *Root, int sum)
+{
+    printf(" %d ;", sum); // Печатаем сумму недоступных из данной вершины узлов,
+    int sumleft = sum; // Сумма вершин слево
+    int sumright = sum; // сумма вершин справо
+    if (Root->Left != NULL)
+    {
+        // Получаем сумму левого поддерева
+        sumleft += Prn_Tree_SumExistentNodes(Root->Left);
+    }
+    if (Root->Right != NULL)
+    {
+        // Получаем сумму правого поддерева
+        sumright += Prn_Tree_SumExistentNodes(Root->Right);
+    }
+    if (Root->Left != NULL)
+    {
+        // передаём налево сумму правого поддерева и текущего узла,
+        // так как они недоступны слево следующему узлу слево
+        Prn_Tree_SumPrevNodes(Root->Left, sumright + Root->Value);
+    }
+    if (Root->Right != NULL)
+    {
+        // Передаём направо сумму левого поддерева и текщего узла,
+        // так как они не доступны справо.
+        Prn_Tree_SumPrevNodes(Root->Right, sumleft + Root->Value);
+    }
 }
+
 //--------------------------------------------------------------------------
 int MC_Carthy(int Value)
 {
@@ -876,7 +903,7 @@ void BTree::Run()
             }
             case 14:								// 14 -  сумма листьев не доступных из вершины
             {
-                Prn_Tree_SumNotExistentNodes(&Arr_Node[0]);
+                Prn_Tree_SumNotExistentNodes(&Arr_Node[0], 0);
                 break;
             }
             default:
