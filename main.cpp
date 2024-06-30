@@ -51,7 +51,9 @@ private:
     void Prn_Tree_Width(Node_Tree* Root);
     void Prn_Tree_HLeaf(const Node_Tree* Root, int Cur_Level, int Height);
     void Prn_Tree_HLeaf_2(const Node_Tree* Root, int Cur_Level, int Height);
-    void Prn_Tree_SumPrevNodes(const Node_Tree *root, const int sum);
+    void Prn_Tree_SumPrevNodes(const Node_Tree* Root, const int sum);
+    int Prn_Tree_SumExistentNodes(const Node_Tree* Root);
+    int Prn_Tree_SumNotExistentNodes(const Node_Tree* Root);
 
     void Clear_Order_1(Node_Tree* Root);
     int Create_Order_Row_2(Node_Tree* Root);
@@ -684,7 +686,29 @@ void BTree::Prn_Tree_SumPrevNodes(const Node_Tree *Root, const int sum)
         Prn_Tree_SumPrevNodes(Root->Right, sum + Root->Value);
     }
 }
+//----------------------------------------------------------------------------
+// 13 -  В вершину вставить сумму листьев достижимых из данной вершины
+//----------------------------------------------------------------------------
+int BTree::Prn_Tree_SumExistentNodes(const Node_Tree* Root)
+{
+    int sum = Root->Value;
+    if (Root->Left != NULL)
+    {
+        sum += Prn_Tree_SumExistentNodes(Root->Left);
+    }
+    if (Root->Right != NULL)
+    {
+        sum += Prn_Tree_SumExistentNodes(Root->Right);
+    }
+    printf(" %d ;", sum);
+    return sum;
+}
+//--------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+// 14 -  В вершину вставить сумму листьев НЕ достижимых из данной вершины
+//----------------------------------------------------------------------------
 
+}
 //--------------------------------------------------------------------------
 int MC_Carthy(int Value)
 {
@@ -841,6 +865,18 @@ void BTree::Run()
             case 12:								// 12 -  сумма вершин от корня до этого листа
             {
                 Prn_Tree_SumPrevNodes(&Arr_Node[0], 0);
+                break;
+            }
+
+                break;
+            case 13:								// 13 -  сумма листьев доступных из вершины
+            {
+                Prn_Tree_SumExistentNodes(&Arr_Node[0]);
+                break;
+            }
+            case 14:								// 14 -  сумма листьев не доступных из вершины
+            {
+                Prn_Tree_SumNotExistentNodes(&Arr_Node[0]);
                 break;
             }
             default:
