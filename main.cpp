@@ -51,6 +51,7 @@ private:
     void Prn_Tree_Width(Node_Tree* Root);
     void Prn_Tree_HLeaf(const Node_Tree* Root, int Cur_Level, int Height);
     void Prn_Tree_HLeaf_2(const Node_Tree* Root, int Cur_Level, int Height);
+    void Prn_Tree_SumPrevNodes(const Node_Tree *root, const int sum);
 
     void Clear_Order_1(Node_Tree* Root);
     int Create_Order_Row_2(Node_Tree* Root);
@@ -60,6 +61,7 @@ private:
 
     void Exch_Numbers(Node_Tree* Root);
     void Move_Odd_Down(Node_Tree* Root);
+
 };
 //-------------------------------------------------------------------------------------------
 BTree::BTree()
@@ -109,7 +111,7 @@ int BTree::Get_Height(Node_Tree* Root)
     return Right_Height + 1;
 }
 //----------------------------------------------------------------------------
-// Высота листа с минимальным уровнем (ближнего листа к корню) в дереве 
+// Высота листа с минимальным уровнем (ближнего листа к корню) в дереве
 //----------------------------------------------------------------------------
 int BTree::Get_HeightL(Node_Tree* Root)
 {
@@ -574,7 +576,7 @@ void BTree::Delete_Not_Max_Order_4(Node_Tree* Root, int Max, int Current, int Fl
     return;
 }
 //---------------------------------------------------------------------------
-// 10-5 Распечатываем самые длинные пути в дереве с четными вершинами 
+// 10-5 Распечатываем самые длинные пути в дереве с четными вершинами
 //---------------------------------------------------------------------------
 void BTree::Prn_Max_Order_5(Node_Tree* Root, int Max, int Current, int Flag)
 {
@@ -667,8 +669,54 @@ void BTree::Move_Odd_Down(Node_Tree* Root)
     }
     Exch_Numbers(Root);
 }
+//----------------------------------------------------------------------------
+// 12 -  вставить сумму вершин от корня до этого листа
+//----------------------------------------------------------------------------
+void BTree::Prn_Tree_SumPrevNodes(const Node_Tree *Root, const int sum)
+{
+    printf(" %d ;", sum + Root->Value);
+    if (Root->Left != NULL)
+    {
+        Prn_Tree_SumPrevNodes(Root->Left, sum + Root->Value);
+    }
+    if (Root->Right != NULL)
+    {
+        Prn_Tree_SumPrevNodes(Root->Right, sum + Root->Value);
+    }
+}
 
-
+//--------------------------------------------------------------------------
+int MC_Carthy(int Value)
+{
+    int Result;
+    if (Value > 100)
+    {
+        Result = Value - 10;
+    }
+    else
+    {
+        Result = MC_Carthy(MC_Carthy(Value + 11));
+    }
+    return Result;
+}
+//--------------------------------------------------------------------------
+int Bizarre(int Value)
+{
+    int Result;
+    if (Value == 1)
+    {
+        Result = 1;
+    }
+    else if (Value % 2 == 0)
+    {
+        Result = Bizarre((int)(Value / 2));
+    }
+    else // для нечетных n, больших 1
+    {
+        Result = Bizarre((int)(3 * Value + 1) / 2);
+    }
+    return Result;
+}
 
 
 //--------------------------------------------------------------------------
@@ -696,6 +744,10 @@ void BTree::Run()
         cout << "9 -  Распечатать самый высокий лист(листья) в дереве \n";
         cout << "10 - Распечатать самые длинные пути в дереве с четными вершинами \n";
         cout << "11 - Сместить нечетные вершины вниз \n";
+        cout << "12 - В лист вставить сумму вершин от корня до этого листа \n";
+        cout << "13 - В вершину вставить сумму листьев достижимых из данной вершины \n";
+        cout << "14 - В вершину вставить сумму листьев не достижимых из данной вершины \n";
+        cout << "15 - В лист вставить сумму всех вершин за исключением вершин от корня до этого листа \n";
         cout << "0 - Выход -  \n";
         cin >> i;
         switch (i)
@@ -786,6 +838,11 @@ void BTree::Run()
                 Print_Tree(CONST_Flag_Value);
                 break;
             }
+            case 12:								// 12 -  сумма вершин от корня до этого листа
+            {
+                Prn_Tree_SumPrevNodes(&Arr_Node[0], 0);
+                break;
+            }
             default:
                 break;
         }
@@ -799,38 +856,8 @@ void BTree::Run()
     }
 
 }
-//--------------------------------------------------------------------------
-int MC_Carthy(int Value)
-{
-    int Result;
-    if (Value > 100)
-    {
-        Result = Value - 10;
-    }
-    else
-    {
-        Result = MC_Carthy(MC_Carthy(Value + 11));
-    }
-    return Result;
-}
-//--------------------------------------------------------------------------
-int Bizarre(int Value)
-{
-    int Result;
-    if (Value == 1)
-    {
-        Result = 1;
-    }
-    else if (Value % 2 == 0)
-    {
-        Result = Bizarre((int)(Value / 2));
-    }
-    else // для нечетных n, больших 1
-    {
-        Result = Bizarre((int)(3 * Value + 1) / 2);
-    }
-    return Result;
-}
+
+
 //----------------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -841,7 +868,7 @@ int main(int argc, char* argv[])
 /*	for (Val=1; Val<10; Val++)
 	{
 		printf("\n val %d :MC_Carthy %d", Val, MC_Carthy(Val));
-	} 
+	}
 	for (Val = 10; Val < 30; Val++)
 	{
 		printf("\n val %d :Bizarre %d", Val, Bizarre(Val));
