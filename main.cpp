@@ -1,4 +1,8 @@
-﻿#include <iostream>
+﻿// Practice_2_Recursion.cpp : Defines the entry point for the console application.
+//
+
+
+#include <iostream>
 using namespace std;
 
 const int CONST_MAX				= 1000;
@@ -105,14 +109,31 @@ int BTree::Get_Height(Node_Tree* Root)
     return Right_Height + 1;
 }
 //----------------------------------------------------------------------------
-// Высота листа с минимальным уровнем (ближнего листа к корню) в дереве
+// Высота листа с минимальным уровнем (ближнего листа к корню) в дереве 
 //----------------------------------------------------------------------------
 int BTree::Get_HeightL(Node_Tree* Root)
 {
     int Left_Height  = CONST_MAX;
     int Right_Height = CONST_MAX;
 
-    return 1;
+    if (Root->Left != NULL)
+    {
+        Left_Height = Get_HeightL(Root->Left);
+    }
+    if (Root->Right != NULL)
+    {
+        Right_Height = Get_HeightL(Root->Right);
+    }
+    if ((Left_Height == Right_Height) && (Left_Height == CONST_MAX))
+    {
+        return 1;
+    }
+
+    if (Left_Height > Right_Height)
+    {
+        return Right_Height + 1;
+    }
+    return Left_Height + 1;
 }
 //----------------------------------------------------------------------------
 // Нахождение ширины дерева
@@ -300,11 +321,11 @@ int BTree::Prn_Tree_Height_Direct_2(const Node_Tree* Root, int Flag)
         printf(" %d ;", Root->Value);
     }
     Flag = !Flag;   // переворачиваем флаг
-        if (Root->Left != NULL) // идём налево
+    if (Root->Left != NULL) // идём налево
     {
         Flag = Prn_Tree_Height_Direct_2(Root->Left, Flag); // идём налево и получаем флаг слева
     }
-        if (Root->Right != NULL) // идём направо
+    if (Root->Right != NULL) // идём направо
     {
         Flag = Prn_Tree_Height_Direct_2(Root->Right, Flag); //идём направо и получаем флаг справа
     }
@@ -315,18 +336,15 @@ int BTree::Prn_Tree_Height_Direct_2(const Node_Tree* Root, int Flag)
 //----------------------------------------------------------------------------
 void BTree::Prn_Tree_Height_Reverse_Odd_Value(const Node_Tree* Root)
 {
-    if(Root->Left != NULL)
+    if (Root->Left != NULL)
     {
         Prn_Tree_Height_Reverse_Odd_Value(Root->Left);
     }
-    if(Root->Right != NULL)
+    if (Root->Right != NULL)
     {
         Prn_Tree_Height_Reverse_Odd_Value(Root->Right);
     }
-    if(Root->Value % 2)
-    {
-        printf(" %d ;", Root->Value);
-    }
+    if (Root->Value % 2) printf(" %d ;", Root->Value);
 }
 //----------------------------------------------------------------------------
 // - 6 -  Прямой обход дерева (четные уровни)
@@ -345,8 +363,7 @@ void BTree::Prn_Tree_Height_Direct_Even_Level(const Node_Tree* Root, int Level)
     {
         Prn_Tree_Height_Direct_Even_Level(Root->Right, Level + 1);
     }
-   }
-
+}
 //-------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 // - 7 -  Обход дерева в ширину
@@ -359,7 +376,7 @@ void BTree::Prn_Tree_Width(Node_Tree* Root)
 
     if (Root != NULL)
     {
-        Queue_Head = new Queue_Tree;
+        Queue_Head = new  Queue_Tree;
         Queue_Head->Value = Root;
         Queue_Head->Next = NULL;
     }
@@ -396,12 +413,37 @@ void BTree::Prn_Tree_Width(Node_Tree* Root)
 //----------------------------------------------------------------------------
 void BTree::Prn_Tree_HLeaf(const Node_Tree* Root, int Cur_Level, int Height)
 {
+    if (Cur_Level == Height) printf(" %d ;", Root->Value);
+    if (Root->Left != NULL)
+    {
+        Prn_Tree_HLeaf(Root->Left, Cur_Level + 1, Height);
+    }
+    if (Root->Right != NULL)
+    {
+        Prn_Tree_HLeaf(Root->Right, Cur_Level + 1, Height);
+    }
 }
 //----------------------------------------------------------------------------
 // - 9 -  Распечатать самый высокий лист(листья) в дереве
 //----------------------------------------------------------------------------
 void BTree::Prn_Tree_HLeaf_2(const Node_Tree* Root, int Cur_Level, int Height)
 {
+    if ((Cur_Level == Height) && (Root->Left == NULL) && (Root->Right == NULL))
+    {
+        if ((Root->Left == NULL) && (Root->Right == NULL))
+        {
+            printf(" %d ;", Root->Value);
+        }
+        return;
+    }
+    if (Root->Left != NULL)
+    {
+        Prn_Tree_HLeaf_2(Root->Left, Cur_Level + 1, Height);
+    }
+    if (Root->Right != NULL)
+    {
+        Prn_Tree_HLeaf_2(Root->Right, Cur_Level + 1, Height);
+    }
 }
 
 //---------------------------------------------------------------------------
@@ -409,12 +451,56 @@ void BTree::Prn_Tree_HLeaf_2(const Node_Tree* Root, int Cur_Level, int Height)
 //---------------------------------------------------------------------------
 void BTree::Clear_Order_1(Node_Tree* Root)
 {
+    if (Root->Left != NULL)
+    {
+        Clear_Order_1(Root->Left);
+    }
+    if (Root->Right != NULL)
+    {
+        Clear_Order_1(Root->Right);
+    }
+    Root->Num_Order = 0;
 }
 //---------------------------------------------------------------------------
 // 10-2 Создание путей в дереве с четными вершинами
 //---------------------------------------------------------------------------
 int BTree::Create_Order_Row_2(Node_Tree* Root)
 {
+    int Left_Height = 0;
+    int Right_Height = 0;
+
+    if (Root->Left != NULL)
+    {
+        Left_Height = Create_Order_Row_2(Root->Left);
+    }
+    if (Root->Right != NULL)
+    {
+        Right_Height = Create_Order_Row_2(Root->Right);
+    }
+    if ((Root->Left == NULL) && (Root->Right == NULL))
+    {
+        if (Root->Value % 2 == 0)
+        {
+            Root->Num_Order = 1;
+        }
+        return Root->Num_Order;
+    }
+    else
+    {
+        if (Root->Value % 2 == 0)
+        {
+            if (Left_Height > Right_Height)
+            {
+                Root->Num_Order = Left_Height + 1;
+            }
+            else
+            {
+                Root->Num_Order = Right_Height + 1;
+            }
+            return Root->Num_Order;
+        }
+        else return 0;
+    }
     return 0;
 }
 //---------------------------------------------------------------------------
@@ -422,7 +508,28 @@ int BTree::Create_Order_Row_2(Node_Tree* Root)
 //---------------------------------------------------------------------------
 int BTree::Max_Order_Row_3(Node_Tree* Root)
 {
-    return 0;
+    int Left_Height = 0;
+    int Right_Height = 0;
+    int MaxOrder = Root->Num_Order;
+
+    if (Root->Left != NULL)
+    {
+        Left_Height = Max_Order_Row_3(Root->Left);
+        if (MaxOrder < Left_Height)
+        {
+            MaxOrder = Left_Height;
+        }
+    }
+    if (Root->Right != NULL)
+    {
+        Right_Height = Max_Order_Row_3(Root->Right);
+        if (MaxOrder < Right_Height)
+        {
+            MaxOrder = Right_Height;
+        }
+    }
+
+    return MaxOrder;
 }
 //---------------------------------------------------------------------------
 // 10-4 Удаление всех путей кроме максимальных путей с четными вершинами
@@ -433,13 +540,81 @@ int BTree::Max_Order_Row_3(Node_Tree* Root)
 //---------------------------------------------------------------------------
 void BTree::Delete_Not_Max_Order_4(Node_Tree* Root, int Max, int Current, int Flag)
 {
+    int Left_Height		= 0;
+    int Right_Height	= 0;
+    int Local_Flag		= 0;
+
+    Local_Flag = Flag;
+    if (Root->Num_Order == Max)								// обнаружена первая вершина максимального пути
+    {
+        Current = Max - 1;
+        Local_Flag = 1;
+    }
+    else if ((Root->Num_Order == Current) && (Flag == 1))	// обнаружена любая другая вершина максимального пути (не первая)
+    {
+        Current = Current - 1;
+        Local_Flag = 1;
+    }
+    else
+    {
+        Current = 0;										// вершина не расположена максимальном пути с четными вершинами
+        Local_Flag = 0;
+        Root->Num_Order = 0;
+    }
+
+    if (Root->Left != NULL)
+    {
+        Delete_Not_Max_Order_4(Root->Left, Max, Current, Local_Flag);
+    }
+    if (Root->Right != NULL)
+    {
+        Delete_Not_Max_Order_4(Root->Right, Max, Current, Local_Flag);
+    }
+
     return;
 }
 //---------------------------------------------------------------------------
-// 10-5 Распечатываем самые длинные пути в дереве с четными вершинами
+// 10-5 Распечатываем самые длинные пути в дереве с четными вершинами 
 //---------------------------------------------------------------------------
 void BTree::Prn_Max_Order_5(Node_Tree* Root, int Max, int Current, int Flag)
 {
+    int Left_Height = 0;
+    int Right_Height = 0;
+    int LocalFlag = 0;
+
+    LocalFlag = Flag;
+//	if ((Root->Num_Order == Max) && (Flag1 == 1))
+    if ((Root->Num_Order == Max))
+    {
+        cout  << "\n way: "<< Root->Value;
+        Current = Max - 1;
+        LocalFlag = 1;
+    }
+    else if ((Root->Num_Order == Current) && (LocalFlag == 1))
+    {
+        cout << " -- "<< Root->Value ;
+        Current = Current - 1;
+        if (Root->Num_Order == 1)
+        {
+            LocalFlag = 0;
+            Root->Num_Order = 0;
+        }
+    }
+    else
+    {
+        Root->Num_Order = 0;
+        LocalFlag = 0;
+    }
+
+    if (Root->Left != NULL)
+    {
+        Prn_Max_Order_5(Root->Left, Max, Current, LocalFlag);
+    }
+    if (Root->Right != NULL)
+    {
+        Prn_Max_Order_5(Root->Right, Max, Current, LocalFlag);
+    }
+
     return;
 }
 
@@ -448,6 +623,33 @@ void BTree::Prn_Max_Order_5(Node_Tree* Root, int Max, int Current, int Flag)
 //----------------------------------------------------------------------------
 void BTree::Exch_Numbers(Node_Tree* Root)
 {
+    int NumLeft = 0;
+    int NumRight = 0;
+    int Tmp;
+
+    if (Root->Value % 2 == 0) return;
+
+    if (Root->Left != NULL)
+    {
+        NumLeft = Root->Left->Value;
+    }
+    if (Root->Right != NULL)
+    {
+        NumRight = Root->Right->Value;
+    }
+
+    if ((NumLeft > 0) && (NumLeft % 2 == 0))
+    {
+        Root->Left->Value = Root->Value;
+        Root->Value = NumLeft;
+        Exch_Numbers(Root->Left);
+    }
+    else if ((NumRight > 0) && (NumRight % 2 == 0))
+    {
+        Root->Right->Value = Root->Value;
+        Root->Value = NumRight;
+        Exch_Numbers(Root->Right);
+    }
     return;
 }
 //----------------------------------------------------------------------------
@@ -455,7 +657,15 @@ void BTree::Exch_Numbers(Node_Tree* Root)
 //----------------------------------------------------------------------------
 void BTree::Move_Odd_Down(Node_Tree* Root)
 {
-
+    if (Root->Left != NULL)
+    {
+        Move_Odd_Down(Root->Left);
+    }
+    if (Root->Right != NULL)
+    {
+        Move_Odd_Down(Root->Right);
+    }
+    Exch_Numbers(Root);
 }
 
 
@@ -631,7 +841,7 @@ int main(int argc, char* argv[])
 /*	for (Val=1; Val<10; Val++)
 	{
 		printf("\n val %d :MC_Carthy %d", Val, MC_Carthy(Val));
-	}
+	} 
 	for (Val = 10; Val < 30; Val++)
 	{
 		printf("\n val %d :Bizarre %d", Val, Bizarre(Val));
