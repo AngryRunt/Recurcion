@@ -54,6 +54,7 @@ private:
     void Prn_Tree_SumPrevNodes(const Node_Tree* Root, const int sum);
     int Prn_Tree_SumExistentNodes(const Node_Tree* Root);
     void Prn_Tree_SumNotExistentNodes(const Node_Tree* Root, int sum);
+    void Prn_Tree_SumWithoutPrevNodes(const Node_Tree* Root);
 
     void Clear_Order_1(Node_Tree* Root);
     int Create_Order_Row_2(Node_Tree* Root);
@@ -737,6 +738,32 @@ void BTree::Prn_Tree_SumNotExistentNodes(const Node_Tree *Root, int sum)
 }
 
 //--------------------------------------------------------------------------
+// 15 -  В лист вставить сумму всех вершин за исключением вершин от корня до этого листа
+//----------------------------------------------------------------------------
+void BTree::Prn_Tree_SumWithoutPrevNodes(const Node_Tree *Root)
+{
+    int sum = 0; //
+
+    if (Root->Left != NULL)
+    {
+       sum += Prn_Tree_SumExistentNodes(Root->Left);
+    }
+    if (Root->Right != NULL)
+    {
+        sum += Prn_Tree_SumExistentNodes(Root->Right);
+    }
+    printf(" %d ;", sum);
+    if (Root->Left != NULL)
+    {
+        Prn_Tree_SumWithoutPrevNodes(Root->Left);
+    }
+    if (Root->Right != NULL)
+    {
+        Prn_Tree_SumWithoutPrevNodes(Root->Right);
+    }
+}
+
+//--------------------------------------------------------------------------
 int MC_Carthy(int Value)
 {
     int Result;
@@ -904,6 +931,11 @@ void BTree::Run()
             case 14:								// 14 -  сумма листьев не доступных из вершины
             {
                 Prn_Tree_SumNotExistentNodes(&Arr_Node[0], 0);
+                break;
+            }
+            case 15:								// 14 -  сумма листьев не доступных из вершины
+            {
+                Prn_Tree_SumWithoutPrevNodes(&Arr_Node[0]);
                 break;
             }
             default:
